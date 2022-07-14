@@ -1,6 +1,8 @@
 import { Container, Stage } from '@inlet/react-pixi';
 import Grid from './Grid';
 import GridContainer from './GridContainer';
+import { useEffect, useState } from 'react';
+import { generateGrid, Tile } from '../util/generateGrid';
 
 type Props = {
   size: number;
@@ -8,6 +10,21 @@ type Props = {
 
 const Game = (props: Props) => {
   const { size } = props;
+
+  //begin here --------------------------------------------
+  const [grid, setGrid] = useState<Tile[]>([]);
+  const [turn, setTurn] = useState('X');
+
+  useEffect(() => {
+    const newGrid = generateGrid(3, 3);
+    setGrid(newGrid);
+  }, []);
+
+  //the code in this block will be replaced with the server side data implementation
+  //end here ----------------------------------------------
+
+  console.log(grid);
+
   return (
     <div className="flex justify-center align-middle">
       <Stage
@@ -18,6 +35,9 @@ const Game = (props: Props) => {
         options={{ backgroundAlpha: 0 }}
       >
         <Grid size={size} />
+        {grid.map((tile) => (
+          <GridContainer tile={tile} turn={turn} size={size} />
+        ))}
       </Stage>
     </div>
   );
