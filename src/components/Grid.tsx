@@ -25,7 +25,7 @@ const Grid = (props: Props) => {
     },
     [size]
   );
-  return <Graphics draw={draw} />;
+  return <Graphics draw={draw} zIndex={2} />;
 };
 
 export default Grid;

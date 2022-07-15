@@ -1,4 +1,5 @@
-import { Container, Stage } from '@inlet/react-pixi';
+import { Stage } from '@inlet/react-pixi';
+import { Container } from '@inlet/react-pixi';
 import Grid from './Grid';
 import GridContainer from './GridContainer';
 import { useEffect, useState } from 'react';
@@ -34,10 +35,17 @@ const Game = (props: Props) => {
         renderOnComponentChange={true}
         options={{ backgroundAlpha: 0 }}
       >
-        <Grid size={size} />
-        {grid.map((tile) => (
-          <GridContainer tile={tile} turn={turn} size={size} />
-        ))}
+        <Container>
+          <Grid size={size} />
+          {grid.map((tile) => (
+            <GridContainer
+              tile={tile}
+              turn={turn}
+              size={size}
+              key={JSON.stringify(tile.coords)}
+            />
+          ))}
+        </Container>
       </Stage>
     </div>
   );
