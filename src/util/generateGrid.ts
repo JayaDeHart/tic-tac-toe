@@ -24,6 +24,5 @@ export function generateGrid(xDim: number, yDim: number) {
       output.push(new Tile([y, x], xDim, yDim));
     }
   }
-
   return output;
 }

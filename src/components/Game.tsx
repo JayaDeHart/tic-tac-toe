@@ -4,6 +4,7 @@ import Grid from './Grid';
 import GridContainer from './GridContainer';
 import { useEffect, useState } from 'react';
 import { generateGrid, Tile } from '../util/generateGrid';
+import findWinner from '../util/findWinner';
 
 type Props = {
   size: number;
@@ -23,8 +24,6 @@ const Game = (props: Props) => {
 
   //the code in this block will be replaced with the server side data implementation
   //end here ----------------------------------------------
-
-  console.log(grid);
 
   function updateGrid(tile: Tile, value: string) {
     const newGrid = grid.map((old: Tile) => {
