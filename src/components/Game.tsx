@@ -14,7 +14,7 @@ const Game = (props: Props) => {
 
   //begin here --------------------------------------------
   const [grid, setGrid] = useState<Tile[]>([]);
-  const [turn, setTurn] = useState('X');
+  const [turn, setTurn] = useState('o');
 
   useEffect(() => {
     const newGrid = generateGrid(3, 3);
@@ -25,6 +25,26 @@ const Game = (props: Props) => {
   //end here ----------------------------------------------
 
   console.log(grid);
+
+  function updateGrid(tile: Tile, value: string) {
+    const newGrid = grid.map((old: Tile) => {
+      if (JSON.stringify(tile.coords) === JSON.stringify(old.coords)) {
+        return {
+          ...old,
+          value,
+        };
+      } else {
+        return old;
+      }
+    });
+    setGrid(newGrid);
+    if (turn === 'o') {
+      setTurn('x');
+    }
+    if (turn === 'x') {
+      setTurn('o');
+    }
+  }
 
   return (
     <div className="flex justify-center align-middle">
@@ -43,6 +63,7 @@ const Game = (props: Props) => {
               turn={turn}
               size={size}
               key={JSON.stringify(tile.coords)}
+              updateGrid={updateGrid}
             />
           ))}
         </Container>

@@ -1,12 +1,18 @@
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import { Tile } from '../util/generateGrid';
 import { Container, Sprite } from '@inlet/react-pixi';
 import * as PIXI from 'pixi.js';
 
-type Props = { tile: Tile; turn: string; size: number };
+type Props = {
+  tile: Tile;
+  turn: string;
+  size: number;
+  updateGrid: (tile: Tile, value: string) => void;
+};
 
 const GridContainer = (props: Props) => {
-  const { turn, tile, size } = props;
+  const [child, setChild] = useState(false);
+  const { turn, tile, size, updateGrid } = props;
   const { coords, value, xLength, yLength } = tile;
 
   //calculate x and y position based on coords and size
@@ -29,24 +35,53 @@ const GridContainer = (props: Props) => {
     return (1 / xLength) * size - 5;
   }, [yLength, size]);
 
-  console.log(height);
+  const isDefault = useMemo(() => {
+    return value === 'blank';
+  }, [value]);
 
-  return (
-    <Sprite
-      x={x}
-      y={y}
-      image={'./xtransparent.png'}
-      height={height}
-      width={width}
-      // texture={PIXI.Texture.EMPTY}
-      interactive={true}
-      mouseover={() => {}}
-      mousedown={() => {
-        console.log(tile);
-      }}
-      zIndex={-1}
-    />
-  );
+  const hArea = new PIXI.Rectangle(x, y, width, height);
+
+  if (isDefault) {
+    return (
+      <Container
+        hitArea={hArea}
+        interactive={true}
+        pointerover={() => {
+          if (tile.value === 'blank') {
+            setChild(true);
+          }
+        }}
+        pointerout={() => {
+          if (tile.value === 'blank') {
+            setChild(false);
+          }
+        }}
+        mousedown={() => {
+          updateGrid(tile, turn);
+        }}
+      >
+        {child && (
+          <Sprite
+            x={x}
+            y={y}
+            height={height}
+            width={width}
+            image={`./${turn}transparent.png`}
+          />
+        )}
+      </Container>
+    );
+  } else {
+    return (
+      <Sprite
+        x={x}
+        y={y}
+        height={height}
+        width={width}
+        image={`./${value}.png`}
+      />
+    );
+  }
 };
 
 export default GridContainer;
