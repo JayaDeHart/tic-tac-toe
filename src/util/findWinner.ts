@@ -36,7 +36,7 @@ export default function findWinner(grid: Tile[]) {
     }
   });
 
-  if (moves > 8) {
+  if (moves > grid[0].xLength * grid[0].xLength) {
     return new Results(StatusTypes.draw);
   }
 
