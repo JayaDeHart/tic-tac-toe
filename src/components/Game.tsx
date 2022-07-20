@@ -64,7 +64,7 @@ const Game = (props: Props) => {
 
   return (
     <div className="p-4">
-      {!inGame && <h1 className="text-4xl text-gray-800">Tic Tac Toe</h1>}
+      {!inGame && <h1 className="text-3xl text-gray-800">Tic Tac Toe</h1>}
       {!inGame && (
         <h4 className="text-gray-800">Select a size and start playing!</h4>
       )}
