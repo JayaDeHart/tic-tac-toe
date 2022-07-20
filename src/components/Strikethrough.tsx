@@ -10,13 +10,11 @@ type Props = {
 };
 
 const Strikethrough = (props: Props) => {
-  const { winner, coords, size, dimension } = props;
-
-  console.log(coords);
+  const { coords, size, dimension } = props;
 
   const offset = useMemo(() => {
     return ((1 / dimension) * size) / 2;
-  }, [coords, size, dimension]);
+  }, [size, dimension]);
 
   const x1 = useMemo(() => {
     return (1 / dimension) * coords[0][1] * size;
@@ -36,17 +34,11 @@ const Strikethrough = (props: Props) => {
 
   const draw = useCallback(
     (g: PIXI.Graphics) => {
-      let color = 0;
-      if (winner === 'x') {
-        color = 0xff615f;
-      } else {
-        color = 0x3ec5f3;
-      }
-      g.lineStyle({ width: 10, color: color, alpha: 1 });
+      g.lineStyle({ width: 10, color: 0x000000, alpha: 1 });
       g.moveTo(x1 + offset, y1 + offset);
       g.lineTo(x2 + offset, y2 + offset);
     },
-    [coords, winner, size, dimension]
+    [offset, x1, x2, y1, y2]
   );
   return <Graphics draw={draw} />;
 };
