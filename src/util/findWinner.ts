@@ -1,50 +1,58 @@
 import { Tile } from './generateGrid';
+import _ from 'lodash';
+
+export enum StatusTypes {
+  'pending' = 'pending',
+  'winner' = 'winner',
+  'draw' = 'draw,',
+}
+
+enum WinnerTypes {
+  'x' = 'x',
+  'y' = 'y',
+}
+
+export class Results {
+  status: StatusTypes;
+  coords: Array<number> | null;
+  winner: WinnerTypes | null;
+
+  constructor(
+    status: StatusTypes,
+    coords: any[] | null = null,
+    winner: WinnerTypes | null = null
+  ) {
+    this.status = status;
+    this.coords = coords;
+    this.winner = winner;
+  }
+}
 
 export default function findWinner(grid: Tile[]) {
-  //given an array of objects with
-  //{
-  //coords: [x,y]
-  //value: x | o
-  //}
-  //determine if there are any three tiles of the same value in a straight line
-  //if so, return an array with the coordinates of the start and end of the winning line
-  //if not, but a winner is still possible, return 'pending'
-  //if not and a winner is not possible, return 'draw'
-
-  enum StatusTypes {
-    'pending' = 'pending',
-    'winner' = 'winner',
-    'draw' = 'draw,',
-  }
-
-  enum WinnerTypes {
-    'x' = 'x',
-    'y' = 'y',
-  }
-
-  class Results {
-    status: StatusTypes;
-    coords: Array<number>;
-    winner: WinnerTypes;
-
-    constructor(status: StatusTypes, coords: any[], winner: WinnerTypes) {
-      this.status = status;
-      this.coords = coords;
-      this.winner = winner;
+  let moves = 0;
+  grid.forEach((tile: Tile) => {
+    if (tile.value !== 'blank') {
+      moves++;
     }
+  });
+
+  if (moves > 8) {
+    return new Results(StatusTypes.draw);
   }
 
-  const { xLength, yLength } = grid[0];
+  const copy = _.cloneDeep(grid);
+
+  const { xLength, yLength } = copy[0];
 
   const twoD: any[] = [];
 
-  for (let x = 0; x < grid.length / xLength; x++) {
+  for (let x = 0; x < copy.length / xLength; x++) {
     twoD.push([]);
   }
   let row = 0;
-  while (grid.length > 0) {
+  while (copy.length > 0) {
     for (let x = 0; x < xLength; x++) {
-      twoD[row].push(grid.shift()?.value);
+      twoD[row].push(copy.shift()?.value);
     }
     row++;
   }
@@ -91,5 +99,58 @@ export default function findWinner(grid: Tile[]) {
     }
   }
 
-  //now we check for diagonal winners
+  //top left bottom right
+
+  for (let i = 0; i <= 2 * (xLength - 1); i++) {
+    const winner = [];
+    const coords = [];
+    for (let j = yLength - 1; j >= 0; j--) {
+      let x = i - (yLength - j);
+      if (x >= 0 && x < yLength) {
+        winner.push(twoD[j][x]);
+        coords.push([j, x]);
+        if (winner.length > 3) {
+          winner.shift();
+        }
+        if (coords.length > 3) {
+          coords.shift();
+        }
+        if (winner.join('') === 'xxx' || winner.join('') === 'ooo') {
+          return new Results(
+            StatusTypes.winner,
+            [coords[0], coords[2]],
+            winner[0]
+          );
+        }
+      }
+    }
+  }
+
+  //top right bottom left
+
+  for (let i = 0; i <= 2 * (xLength - 1); i++) {
+    const winner = [];
+    const coords = [];
+    for (let j = xLength - 1; j >= 0; --j) {
+      let x = i - j;
+      if (x >= 0 && x < xLength) {
+        winner.push(twoD[j][x]);
+        coords.push([j, x]);
+        if (winner.length > 3) {
+          winner.shift();
+        }
+        if (coords.length > 3) {
+          coords.shift();
+        }
+        if (winner.join('') === 'xxx' || winner.join('') === 'ooo') {
+          return new Results(
+            StatusTypes.winner,
+            [coords[0], coords[2]],
+            winner[0]
+          );
+        }
+      }
+    }
+  }
+  return new Results(StatusTypes.pending);
 }
